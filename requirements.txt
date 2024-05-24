@@ -1,0 +1,6 @@
+spotipy
+streamlit
+faicons
+shiny
+seaborn
+pandas

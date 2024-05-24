@@ -1,0 +1,29 @@
+/* styles.css */
+* {
+    font-family: 'Helvetica', sans-serif;
+}
+h1 {
+    font-family: 'Helvetica', sans-serif;
+}
+.song-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-bottom: 10px;
+}
+.song-info {
+    text-align: left;
+    color: white;
+    font-size: 16px;
+    padding-top: 10px;
+}
+.song-info a {
+    color: #1DB954; /* spotify green for links */
+}
+.song-info a:hover {
+    color: #1ED760; /* slightly lighter green for hover effect */
+}
+/* Sidebar specific styling */
+.css-1d391kg, .css-1cpxqw2, .css-145kmo2, .css-1vgnld7, .css-2trqyj, .css-1djdyxg {
+    font-family: 'Helvetica', sans-serif;
+}
