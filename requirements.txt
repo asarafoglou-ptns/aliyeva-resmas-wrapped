@@ -1,6 +1,9 @@
-spotipy
-streamlit
+spotipy~=2.23.0
+streamlit~=1.35.0
 faicons
 shiny
 seaborn
-pandas
+pandas~=2.0.3
+plotly~=5.9.0
+scikit-learn~=1.3.0
+setuptools~=68.0.0
