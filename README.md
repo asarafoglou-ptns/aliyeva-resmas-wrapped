@@ -1,6 +1,6 @@
 # aliyeva-resmas-wrapped
 
-Building a version of Spotify wrapped for resmas students - for now, there are two functions in the package nested in a class (GetTrack):
+Building a year-round version of Spotify wrapped - allows you to get your top 30 songs from the last month, 6 months, or year, also allows you to compare the audio features of your top songs to the global top 50. Still need to do more organization regarding the folder structure - the relevant folder for peer review is myapp.
 
 GetTrack:
 - A class with functions that retrieve various information about tracks (for now: ID and features).
