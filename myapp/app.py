@@ -1,14 +1,31 @@
 import streamlit as st
 import plotly.graph_objects as go
-from shared import df, df_combined  # Import the DataFrames from shared.py
+from shared import df, df_combined  # import the DataFrames from shared.py
 
 # page layout, reminder: must be the first st. command in script
 st.set_page_config(layout='wide', initial_sidebar_state='collapsed')
 
-# read and apply CSS styles - will change to relative path in a later commit
-css_path = '/Users/ofelyaaliyeva/Desktop/aliyeva-resmas-wrapped/static/styles.css'
-with open(css_path) as f:
-    css = f.read()
+# some css here for styling
+css = """
+* {
+    font-family: 'Helvetica', sans-serif !important;
+}
+
+.song-info a {
+    color: #1DB954 !important;
+    text-decoration: none;
+}
+
+.song-info a:hover {
+    text-decoration: underline;
+}
+
+.song-info {
+    margin: 5px 0;
+    line-height: 1.5;
+}
+"""
+
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 # navigation
