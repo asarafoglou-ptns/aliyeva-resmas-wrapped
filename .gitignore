@@ -9,3 +9,5 @@
 /myapp/.cache
 /.aliyeva-resmas-wrapped.iml
 /.DS_Store
+/myapp/.DS_Store
+/myapp/__pycache__
