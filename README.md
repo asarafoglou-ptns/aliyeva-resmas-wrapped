@@ -27,7 +27,7 @@ pip install git+https://github.com/asarafoglou-ptns/resmaswrapped.git
 ```
 2. Locate the package, then go to **app.py**. If you can't locate the package, run:
 ```python
-pip show resmaswrapped
+pip show myapp
 ```
 3. In app.py, insert your client ID and secret at the top of the script. It should look like this:
 ```python
@@ -36,7 +36,7 @@ SPOTIPY_CLIENT_SECRET = 'Your client secret here'
 ```
 4. In the terminal, enter
 ```python
-streamlit run path/to/app/resmaswrapped/app.py
+streamlit run path/to/app/myapp/app.py
 ```
 5. Allow Spotify authentication and enjoy!
 
