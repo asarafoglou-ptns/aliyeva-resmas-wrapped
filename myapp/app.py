@@ -1,34 +1,20 @@
-import streamlit as st
-import plotly.graph_objects as go
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import os
-
-def set_spotify_credentials():
-    client_id = input("Enter your Spotify Client ID: ")
-    client_secret = input("Enter your Spotify Client Secret: ")
-
-    # Set environment variables
-    os.environ['SPOTIPY_CLIENT_ID'] = client_id
-    os.environ['SPOTIPY_CLIENT_SECRET'] = client_secret
-
-    print("Spotify credentials set successfully.")
-
-set_spotify_credentials()
-
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import streamlit as st
+import plotly.graph_objects as go
 
 # Spotify API credentials
-SPOTIPY_CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID', default=None)
-SPOTIPY_CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET', default=None)
+SPOTIPY_CLIENT_ID = '4e6464520c2b4cf3a90ad792e5ad6504'
+SPOTIPY_CLIENT_SECRET = '4dde9d4fbb604ad3b22c0ad7204e25a0'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-top-read'
 
-# authentication
+
 def authenticate_spotify():
     """
-    Authenticate with the Spotify API using OAuth.
+    Authenticates with the Spotify API using OAuth.
 
     Returns:
         Spotipy client: Authenticated Spotipy client object.
@@ -39,7 +25,6 @@ def authenticate_spotify():
                                                      scope=SCOPE))
 
 
-# Data Retrieval Functions
 class GetTrack:
     """
     A class with functions that retrieve various information about tracks (track ID, track features, audio features).
@@ -50,11 +35,12 @@ class GetTrack:
         """
         Returns a list of track IDs.
 
-        :param tracks: List of track objects
-        :type tracks: dict
-        :param is_playlist: Boolean indicating if the tracks are from a playlist
-        :type is_playlist: bool
-        :return: A list of track IDs
+        Args:
+            tracks (dict): List of track objects.
+            is_playlist (bool): Boolean indicating if the tracks are from a playlist.
+
+        Returns:
+            list: A list of track IDs.
         """
         if is_playlist:
             return [track['track']['id'] for track in tracks['items']]
@@ -65,6 +51,13 @@ class GetTrack:
     def get_track_features(sp, track_ids):
         """
         Retrieves track information for multiple tracks in a batch request.
+
+        Args:
+            sp (Spotipy client): Authenticated Spotipy client object.
+            track_ids (list): List of track IDs.
+
+        Returns:
+            list: List of track features.
         """
         tracks_meta = sp.tracks(track_ids)
         track_features = [
@@ -83,6 +76,13 @@ class GetTrack:
     def get_audio_features(sp, track_ids):
         """
         Retrieves audio features for multiple tracks in a batch request.
+
+        Args:
+            sp (Spotipy client): Authenticated Spotipy client object.
+            track_ids (list): List of track IDs.
+
+        Returns:
+            list: List of audio features.
         """
         audio_features = sp.audio_features(track_ids)
         return audio_features
@@ -92,18 +92,19 @@ class GetTrack:
         """
         Collects track data (both metadata and audio features) from a specified source.
 
-        :param sp: Spotipy client
-        :param source: Function to retrieve tracks (e.g., sp.current_user_top_tracks, sp.playlist_tracks)
-        :param label: Label indicating the source or time range
-        :return: List of combined track data
+        Args:
+            sp (Spotipy client): Authenticated Spotipy client object.
+            source (function): Function to retrieve tracks (e.g., sp.current_user_top_tracks, sp.playlist_tracks).
+            label (str): Label indicating the source or time range.
+            is_playlist (bool): Boolean indicating if the tracks are from a playlist.
+
+        Returns:
+            list: List of combined track data.
         """
         tracks = source()
         track_ids = GetTrack.get_track_ids(tracks, is_playlist)
 
-        # Fetch track features in batch
         track_features = GetTrack.get_track_features(sp, track_ids)
-
-        # Fetch audio features in batch
         audio_features = GetTrack.get_audio_features(sp, track_ids)
 
         all_tracks = [
@@ -126,7 +127,7 @@ class GetTrack:
 
         return all_tracks
 
-# Data Processing Functions
+
 def normalize_audio_features(df, features):
     """
     Normalize audio features for comparison.
@@ -141,6 +142,7 @@ def normalize_audio_features(df, features):
     scaler = MinMaxScaler()
     df[features] = scaler.fit_transform(df[features])
     return df
+
 
 def prepare_comparison_data(df, features, label):
     """
@@ -159,6 +161,7 @@ def prepare_comparison_data(df, features, label):
     comparison_data['group'] = label
     return comparison_data
 
+
 # Data Retrieval
 sp = authenticate_spotify()
 
@@ -168,7 +171,6 @@ time_ranges = {
     'medium_term': 'Past 6 months',
     'long_term': 'Past year'
 }
-
 user_tracks_data = [
     track for time_range, label in time_ranges.items()
     for track in GetTrack.collect_tracks_data(sp, lambda tr=time_range: sp.current_user_top_tracks(limit=30, offset=0, time_range=tr), label)
@@ -178,29 +180,27 @@ user_tracks_data = [
 global_top_50_data = GetTrack.collect_tracks_data(
     sp, lambda: sp.playlist_items('37i9dQZEVXbMDoHDwVN2tF', limit=50, offset=0), 'Global Top 50', is_playlist=True)
 
-# DataFrame Creation
+# Making 2 dataframes, one with user top tracks and one with the global top 50
 columns = ['name', 'album', 'artist', 'spotify_url', 'album_cover', 'danceability', 'energy', 'loudness', 'mode',
            'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms', 'time_period']
 df = pd.DataFrame(user_tracks_data, columns=columns)
 df_global_top_50 = pd.DataFrame(global_top_50_data, columns=columns)
 
-# Adding Source Column
+# Merges dataframes
 df['source'] = 'User'
 df_global_top_50['source'] = 'Global Top 50'
-
-# Merging DataFrames
 df_merged = pd.concat([df, df_global_top_50], ignore_index=True)
 
-# Normalizing Audio Features
+# Normalizing audio features so they can be compared
 features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
 df_merged = normalize_audio_features(df_merged, features)
 
-# Data Preparation for Comparison
+# More data prep for comparison
 comparison_df_user = prepare_comparison_data(df_merged, features, 'User')
 comparison_df_global = prepare_comparison_data(df_merged, features, 'Global Top 50')
 df_combined = pd.concat([comparison_df_user, comparison_df_global], ignore_index=True)
 
-# Streamlit Interface
+# Streamlit App - this is the GUI
 st.set_page_config(layout='wide', initial_sidebar_state='collapsed')
 
 # CSS for styling
@@ -223,23 +223,33 @@ css = """
     line-height: 1.5;
 }
 """
-
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 # Navigation
 page = st.sidebar.selectbox("Choose a page", ["Your Top Songs", "Audio Features Analysis"])
 
 if page == "Your Top Songs":
+
     st.title("Your Top Songs")
 
-    # Sidebar Filters
+    # Sidebar
     st.sidebar.title("Filter")
     time_period = st.sidebar.selectbox("Select time period", df['time_period'].unique(), key="time_period")
     num_songs = st.sidebar.slider("Select number of top songs", min_value=1, max_value=30, value=6, key="num_songs")
     search_query = st.sidebar.text_input("Search for a song or artist")
 
-    # Function to Filter DataFrame
     def get_filtered_df(time_period, num_songs, search_query):
+        """
+        Filter the DataFrame based on the selected time period, number of top songs, and search query.
+
+        Parameters:
+            time_period (str): The time period for which to filter the data.
+            num_songs (int): The number of top songs to retrieve.
+            search_query (str): The search query to filter the data by song name or artist.
+
+        Returns:
+            pandas.DataFrame: A DataFrame containing the filtered top song data.
+        """
         filtered_df = df[df['time_period'] == time_period]
         if search_query:
             filtered_df = filtered_df[
@@ -248,12 +258,11 @@ if page == "Your Top Songs":
                 ]
         return filtered_df.head(num_songs)
 
-    # Filtered DataFrame
     filtered_df = get_filtered_df(time_period, num_songs, search_query)
 
     image_height = 400
 
-    # Display Songs
+    # Display songs
     for i in range(0, len(filtered_df), 3):
         cols = st.columns(3)
         for col, row in zip(cols, filtered_df.iloc[i:i+3].iterrows()):
@@ -261,7 +270,7 @@ if page == "Your Top Songs":
             with col:
                 st.markdown(f"""
                     <div class="song-container">
-                        <img src="{song['album_cover']}" class="song-image" width="{image_height}" height="{image_height}">
+                        <img src="{song['album_cover']}\" class=\"song-image\" width=\"{image_height}\" height=\"{image_height}\">
                         <div>
                             <p class='song-info'><strong>Song:</strong> <a href='{song['spotify_url']}' target='_blank'>
                             {song['name']}</a></p>
@@ -269,25 +278,26 @@ if page == "Your Top Songs":
                             <p class='song-info'><strong>Album:</strong> {song['album']}</p>
                         </div>
                     </div>
-                    <hr class="separator">
+                    <hr class=\"separator\">
                 """, unsafe_allow_html=True)
 
 elif page == "Audio Features Analysis":
+
     st.title("Audio Features Analysis")
 
-    # Sidebar Options
+    # Sidebar options for selecting features to plot
     st.sidebar.title("Select Audio Features to Plot")
     features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
     selected_features = [feature for feature in features if st.sidebar.checkbox(feature, True)]
 
-    # Data Option
-    data_option = st.radio("Select data to display", ("User's Top Tracks", "Global Top 50", "Both"), key="data_option", index=0)
+    # Select data to display
+    data_option = st.radio("Select data to display", ("User's Top Tracks", "Global Top 50", "Both"), horizontal=True)
 
-    # Colors
+    # Define colors for "Your Tracks" and "Global Top 50" as pink and blue
     colors = {'User': '#FF69B4', 'Global Top 50': '#1E90FF'}
 
     if selected_features:
-        # Filtered Combined DataFrame
+        # Filter the combined dataframe based on the selected features and data option
         if data_option == "Both":
             filtered_combined_df = df_combined[df_combined['feature'].isin(selected_features)]
         elif data_option == "Global Top 50":
@@ -297,7 +307,7 @@ elif page == "Audio Features Analysis":
             filtered_combined_df = df_combined[
                 (df_combined['feature'].isin(selected_features)) & (df_combined['group'] == "User")]
 
-        # Radar Chart
+        # Create radar chart
         fig = go.Figure()
 
         for group in filtered_combined_df['group'].unique():
@@ -307,7 +317,7 @@ elif page == "Audio Features Analysis":
                 theta=group_df['feature'],
                 fill='toself',
                 name=group,
-                line=dict(color=colors[group])
+                line=dict(color=colors[group])  # Set color based on group
             ))
 
         fig.update_layout(
@@ -326,7 +336,6 @@ elif page == "Audio Features Analysis":
 
         st.plotly_chart(fig, use_container_width=True)
 
-        # Description
         st.markdown("""
         #### What do these audio features mean?
         This radar chart displays the normalized values of selected audio features. The chart compares the average values 
@@ -343,4 +352,3 @@ elif page == "Audio Features Analysis":
         """)
     else:
         st.write("Please select at least one feature to display the radar chart.")
-

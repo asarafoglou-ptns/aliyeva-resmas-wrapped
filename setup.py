@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="resmaswrapped",
+    name="myapp",
     version="0.0.1",
     author="ofelya",
     author_email="ofelyaaaliyeva@gmail.com",
