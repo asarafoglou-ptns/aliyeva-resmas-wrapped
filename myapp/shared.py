@@ -158,7 +158,3 @@ comparison_df_global = prepare_comparison_data(df_merged, features, 'Global Top 
 
 # combine comparison data
 df_combined = pd.concat([comparison_df_user, comparison_df_global], ignore_index=True)
-
-# Display the prepared data for comparison
-print("\nPrepared Data for Comparison:")
-print(df_combined)
