@@ -48,10 +48,10 @@ pip show myapp
 1. Press arrow to display sidebar
    <img width="1470" alt="Screenshot 2024-05-26 at 22 33 49" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/7a97eb46-8855-4851-82bd-c4a936ee6f3c">
 2. Options in sidebar:
-  Choose a page: your top songs or audio features analysis
-  Dropdown menu to filter by time period (past month, 6 months, year)
-  Slide to increase/decrease number of songs displayed
-  Search for a song
+- Choose a page: your top songs or audio features analysis
+- Dropdown menu to filter by time period (past month, 6 months, year)
+- Slide to increase/decrease number of songs displayed
+- Search for a song
      <img width="1469" alt="Screenshot 2024-05-26 at 22 34 20" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/e83aadcd-bb9e-4be8-87fd-17effe4d227a">
 3. Audio features analysis options:
   Check which audio features you would like displayed on the radar plot
