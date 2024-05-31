@@ -40,8 +40,6 @@ streamlit run path/to/app/myapp/app.py
 pip show myapp
 ```
 4. Allow Spotify authentication and enjoy!
-5. If this does not work, my app is also deployed. Check it out here:
-
 
 ## Flowchart
 <img width="699" alt="Screenshot 2024-05-31 at 21 27 28" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/c48958aa-3475-47f0-ac03-10a199f42782">
