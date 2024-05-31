@@ -5,7 +5,6 @@ setuptools.setup(
     version="0.0.1",
     author="ofelya",
     author_email="ofelyaaaliyeva@gmail.com",
-    description="Description of your package",
     python_requires=">=3.6",
     packages=setuptools.find_packages(),
     install_requires=[
