@@ -16,6 +16,5 @@ setuptools.setup(
         "pandas~=2.0.3",
         "plotly~=5.9.0",
         "scikit-learn~=1.3.0",
-        "setuptools~=68.0.0",
     ],
 )
