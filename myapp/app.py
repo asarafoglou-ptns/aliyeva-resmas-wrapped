@@ -6,8 +6,8 @@ import streamlit as st
 import plotly.graph_objects as go
 
 # Spotify API credentials
-SPOTIPY_CLIENT_ID = '4e6464520c2b4cf3a90ad792e5ad6504'
-SPOTIPY_CLIENT_SECRET = '4dde9d4fbb604ad3b22c0ad7204e25a0'
+SPOTIPY_CLIENT_ID = ''
+SPOTIPY_CLIENT_SECRET = ''
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-top-read'
 
