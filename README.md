@@ -55,7 +55,7 @@ pip show myapp
      <img width="1469" alt="Screenshot 2024-05-26 at 22 34 20" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/e83aadcd-bb9e-4be8-87fd-17effe4d227a">
 3. Audio features analysis options:
 - Check which audio features you would like displayed on the radar plot
-- See your own top 30’s audio features, global top 50, or compare both
+- See your own top 30’s audio features, the global top 50's, or compare both
 - Scroll to see what the audio features mean
       <img width="1469" alt="Screenshot 2024-05-31 at 21 26 40" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/9d6b0650-29c9-4948-bb11-51a3dfcaa498">
 
