@@ -30,14 +30,15 @@ pip install git+https://github.com/asarafoglou-ptns/resmaswrapped.git
 pip show resmaswrapped
 ```
 3. In app.py, insert your client ID and secret at the top of the script. It should look like this:
+```python
 SPOTIPY_CLIENT_ID = 'Your client ID here'
 SPOTIPY_CLIENT_SECRET = 'Your client secret here'
-
+```
 4. In the terminal, enter
 ```python
 streamlit run path/to/app/resmaswrapped/app.py
 ```
-6. Allow Spotify authentication and enjoy!
+5. Allow Spotify authentication and enjoy!
 
 
 ## Flowchart
