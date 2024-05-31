@@ -9,15 +9,25 @@ SPOTIPY_CLIENT_SECRET = '4dde9d4fbb604ad3b22c0ad7204e25a0'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-top-read'
 
-# authentication
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
-                                               client_secret=SPOTIPY_CLIENT_SECRET,
-                                               redirect_uri=SPOTIPY_REDIRECT_URI,
-                                               scope=SCOPE))
 
+# authentication
+def authenticate_spotify():
+    """
+    Authenticate with the Spotify API using OAuth.
+
+    Returns:
+        Spotipy client: Authenticated Spotipy client object.
+    """
+    return spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
+                                                     client_secret=SPOTIPY_CLIENT_SECRET,
+                                                     redirect_uri=SPOTIPY_REDIRECT_URI,
+                                                     scope=SCOPE))
+
+
+# Data Retrieval Functions
 class GetTrack:
     """
-    A class with functions that retrieve various information about tracks (for now: ID and features).
+    A class with functions that retrieve various information about tracks (track ID, track features, audio features).
     """
 
     @staticmethod
@@ -85,7 +95,6 @@ class GetTrack:
             track + [
                 audio_feature['danceability'],
                 audio_feature['energy'],
-                audio_feature['key'],
                 audio_feature['loudness'],
                 audio_feature['mode'],
                 audio_feature['speechiness'],
@@ -95,7 +104,6 @@ class GetTrack:
                 audio_feature['valence'],
                 audio_feature['tempo'],
                 audio_feature['duration_ms'],
-                audio_feature['time_signature'],
                 label
             ]
             for track, audio_feature in zip(track_features, audio_features)
@@ -104,57 +112,79 @@ class GetTrack:
         return all_tracks
 
 
-# maps user-friendly labels onto the time periods provided by spotify
+# Data Processing Functions
+def normalize_audio_features(df, features):
+    """
+    Normalize audio features for comparison.
+
+    Args:
+        df (DataFrame): DataFrame containing audio features.
+        features (list): List of audio features to normalize.
+
+    Returns:
+        DataFrame: DataFrame with normalized audio features.
+    """
+    scaler = MinMaxScaler()
+    df[features] = scaler.fit_transform(df[features])
+    return df
+
+
+def prepare_comparison_data(df, features, label):
+    """
+    Prepare comparison data for analysis.
+
+    Args:
+        df (DataFrame): DataFrame containing track data.
+        features (list): List of features to include in the comparison.
+        label (str): Label indicating the source or time range.
+
+    Returns:
+        DataFrame: DataFrame with prepared comparison data.
+    """
+    comparison_data = df[df['source'] == label][features].mean().reset_index()
+    comparison_data.columns = ['feature', 'value']
+    comparison_data['group'] = label
+    return comparison_data
+
+
+# Data Retrieval
+sp = authenticate_spotify()
+
+# Data Retrieval - User's Top Tracks
 time_ranges = {
     'short_term': 'Past month',
     'medium_term': 'Past 6 months',
     'long_term': 'Past year'
 }
 
-# function to fetch user's top tracks for a given time range
-def fetch_user_top_tracks(time_range):
-    return sp.current_user_top_tracks(limit=30, offset=0, time_range=time_range)
-
-# use our function to get the user's top tracks' data
 user_tracks_data = [
     track for time_range, label in time_ranges.items()
-    for track in GetTrack.collect_tracks_data(sp, lambda tr=time_range: fetch_user_top_tracks(tr), label)
+    for track in GetTrack.collect_tracks_data(sp, lambda tr=time_range: sp.current_user_top_tracks(limit=30, offset=0, time_range=tr), label)
 ]
 
-# use our function to get data for the global top 50
+# Data Retrieval - Global Top 50 Tracks
 global_top_50_data = GetTrack.collect_tracks_data(
     sp, lambda: sp.playlist_items('37i9dQZEVXbMDoHDwVN2tF', limit=50, offset=0), 'Global Top 50', is_playlist=True)
 
-# creates a dataframe with the user's top tracks data
-columns = ['name', 'album', 'artist', 'spotify_url', 'album_cover', 'danceability', 'energy', 'key', 'loudness', 'mode',
-           'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms',
-           'time_signature', 'time_period']
+# DataFrame Creation
+columns = ['name', 'album', 'artist', 'spotify_url', 'album_cover', 'danceability', 'energy', 'loudness', 'mode',
+           'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms', 'time_period']
 df = pd.DataFrame(user_tracks_data, columns=columns)
-
-# creates a dataframe with the global top 50 tracks data
 df_global_top_50 = pd.DataFrame(global_top_50_data, columns=columns)
 
-# add a 'source' column to each DataFrame
+# Adding Source Column
 df['source'] = 'User'
 df_global_top_50['source'] = 'Global Top 50'
 
-# merge the two dataframes
+# Merging DataFrames
 df_merged = pd.concat([df, df_global_top_50], ignore_index=True)
 
-# normalize the audio features so they can be compared
+# Normalizing Audio Features
 features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
-scaler = MinMaxScaler()
-df_merged[features] = scaler.fit_transform(df_merged[features])
+df_merged = normalize_audio_features(df_merged, features)
 
-# more data prep. for comparison
-def prepare_comparison_data(df, features, label):
-    comparison_data = df[df['source'] == label][features].mean().reset_index()
-    comparison_data.columns = ['feature', 'value']
-    comparison_data['group'] = label
-    return comparison_data
-
+# Data Preparation for Comparison
 comparison_df_user = prepare_comparison_data(df_merged, features, 'User')
 comparison_df_global = prepare_comparison_data(df_merged, features, 'Global Top 50')
-
-# combine comparison data
 df_combined = pd.concat([comparison_df_user, comparison_df_global], ignore_index=True)
+
