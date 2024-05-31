@@ -25,24 +25,26 @@ When asked for the redirect URI, enter: http://localhost:8888/callback
 ```python
 pip install git+https://github.com/asarafoglou-ptns/resmaswrapped.git
 ```
-2. Locate the package, then go to **app.py**. If you can't locate the package, run:
+2. Once that is installed, run the following in the terminal, replacing the strings with your actual client ID & secret.
+  These commands set your client ID and secret as environment variables.
 ```python
-pip show myapp
+export SPOTIPY_CLIENT_ID='YOUR CLIENT ID HERE'
+export SPOTIPY_CLIENT_SECRET='YOUR CLIENT SECRET HERE'
 ```
-3. In app.py, insert your client ID and secret at the top of the script. It should look like this:
-```python
-SPOTIPY_CLIENT_ID = 'Your client ID here'
-SPOTIPY_CLIENT_SECRET = 'Your client secret here'
-```
-4. In the terminal, enter
+
+3. In the terminal, run
 ```python
 streamlit run path/to/app/myapp/app.py
+
+# in case you can't find the path, run
+pip show myapp
 ```
-5. Allow Spotify authentication and enjoy!
+4. Allow Spotify authentication and enjoy!
+5. If this does not work, my app is also deployed. Check it out here:
 
 
 ## Flowchart
-<img width="721" alt="Screenshot 2024-05-31 at 19 29 27" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/392b88c1-28b3-4c24-8f3c-1d8b68080b66">
+<img width="699" alt="Screenshot 2024-05-31 at 21 27 28" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/c48958aa-3475-47f0-ac03-10a199f42782">
 
 ## UI Tutorial
 1. Press arrow to display sidebar
@@ -52,11 +54,11 @@ streamlit run path/to/app/myapp/app.py
   Dropdown menu to filter by time period (past month, 6 months, year)
   Slide to increase/decrease number of songs displayed
   Search for a song
-  <img width="1469" alt="Screenshot 2024-05-26 at 22 34 20" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/e83aadcd-bb9e-4be8-87fd-17effe4d227a">
+     <img width="1469" alt="Screenshot 2024-05-26 at 22 34 20" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/e83aadcd-bb9e-4be8-87fd-17effe4d227a">
 3. Audio features analysis options:
   Check which audio features you would like displayed on the radar plot
   See your own top 30’s audio features, global top 50, or compare both
-  <img width="1470" alt="Screenshot 2024-05-26 at 22 34 40" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/dec748de-584d-434a-a833-710b729a40fa">
+      <img width="1469" alt="Screenshot 2024-05-31 at 21 26 40" src="https://github.com/asarafoglou-ptns/resmaswrapped/assets/157810991/9d6b0650-29c9-4948-bb11-51a3dfcaa498">
 
 
 
