@@ -1,13 +1,15 @@
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import streamlit as st
 import plotly.graph_objects as go
+import os
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
-# Spotify API credentials
-SPOTIPY_CLIENT_ID = '4e6464520c2b4cf3a90ad792e5ad6504'
-SPOTIPY_CLIENT_SECRET = '4dde9d4fbb604ad3b22c0ad7204e25a0'
+# Retrieve Spotify API credentials from environment variables
+# These should be set in the terminal, but if you are not able to, you can change them directly in this file
+SPOTIPY_CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID')
+SPOTIPY_CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET')
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-top-read'
 
@@ -19,6 +21,9 @@ def authenticate_spotify():
     Returns:
         Spotipy client: Authenticated Spotipy client object.
     """
+    if not SPOTIPY_CLIENT_ID or not SPOTIPY_CLIENT_SECRET:
+        raise ValueError("SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET environment variables must be set")
+
     return spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                                      client_secret=SPOTIPY_CLIENT_SECRET,
                                                      redirect_uri=SPOTIPY_REDIRECT_URI,

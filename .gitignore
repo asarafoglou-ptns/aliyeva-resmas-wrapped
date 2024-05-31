@@ -1,0 +1,13 @@
+# Ignored files
+/.idea/shelf/
+/workspace.xml
+/.idea
+/misc.xml
+/modules.xml
+/vcs.xml
+/.cache
+/myapp/.cache
+/.aliyeva-resmas-wrapped.iml
+/.DS_Store
+/myapp/.DS_Store
+/myapp/__pycache__
