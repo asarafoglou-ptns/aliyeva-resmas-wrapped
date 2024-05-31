@@ -1,4 +1,4 @@
-# Default ignored files
+# Ignored files
 /shelf/
 /workspace.xml
 /.idea
@@ -6,3 +6,5 @@
 /modules.xml
 /vcs.xml
 /.cache
+/myapp/.cache
+/.aliyeva-resmas-wrapped.iml
