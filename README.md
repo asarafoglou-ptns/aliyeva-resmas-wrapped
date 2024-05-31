@@ -1,4 +1,4 @@
-# aliyeva-resmas-wrapped
+# resmaswrapped
 
 Building a year-round version of Spotify wrapped - allows you to get your top 30 songs from the last month, 6 months, or year, also allows you to compare the audio features of your top songs to the global top 50. Still need to do more organization regarding the folder structure - the relevant folder for peer review is myapp.
 
