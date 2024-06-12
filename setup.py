@@ -13,7 +13,7 @@ setuptools.setup(
         "faicons",
         "shiny",
         "seaborn",
-        "pandas~=2.0.3",
+        "pandas",
         "plotly~=5.9.0",
         "scikit-learn~=1.3.0",
     ],
